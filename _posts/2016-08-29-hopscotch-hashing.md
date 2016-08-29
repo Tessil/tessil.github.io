@@ -138,7 +138,7 @@ The overflow list is just an std::list\<std::pair\<const Key, Value\>\>. When an
 
 ## Conclusion
 
-This algorithm offers good performance thanks to its cache locality. This advantage is only valid if the key can be stored in a contiguous area, if the key uses some pointers to other parts of the memory to compute its hash, the algorithm will not be as efficient.
+This algorithm offers good performance thanks to its cache locality. This advantage is only valid if the key can be stored in a contiguous area, if the key uses some pointers to other parts of the memory to check its equality with another key, the algorithm will not be as efficient.
 
 It also offers some upper-bound when we are searching for an element of O(NeighborhoodSize + \|OverflowList\|), where the size of OverflowList is usually equal to 0. 
 

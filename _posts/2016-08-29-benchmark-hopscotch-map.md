@@ -358,7 +358,7 @@ For the integer part, we can see that the hopscotch_map is able to holds its gam
 
 More tests should be done on hopscotch_map by varying the neighborhood size. Here 62 was used a neighborhood size.
 
-In conclusion, if the drawbacks of hopscotch_map are not a problem for you, it may be a good alternative to other hash maps if the key used by the map doesn't use pointers to other parts of the memory to calculate its hash.
+In conclusion, if the drawbacks of hopscotch_map are not a problem for you, it may be a good alternative to other hash maps if the key used by the map doesn't use pointers to other parts of the memory to check its equality with another key.
 
 
 
