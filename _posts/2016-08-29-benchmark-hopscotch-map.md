@@ -207,17 +207,17 @@ comments: true
 
 This benchmark is based on <http://incise.org/hash-table-benchmarks.html> with a few modifications:
 
-* Removed glib, python and ruby hash maps
-* Add the hopscotch_map hash map (which is the one we want to test in the end)
-* Use std::string as key instead of const char * for the string tests
+* The glib, python and ruby hash maps were removed
+* The hopscotch_map hash map was added (which is the one we want to test in the end)
+* We now use std::string as key instead of const char * for the string tests
 * The strings used as keys have now a minimal size of 50 instead of being simple numbers which have been stringified
-* Add some read and iteration tests
-* On random tests, make sure all keys appear only once during the tests
-* Use std::hash<T> as hash function for all maps
+* Some read and iteration tests were added
+* On random tests, we make sure all keys appear only once during the tests
+* We use std::hash\<T\> as hash function for all maps
 
 The fork of the benchmark can be found on [GitHub](https://github.com/Tessil/hash-table-shootout). As well as the [raw results]({{ site.url }}/other/hopscotch_map_benchmark_raw_results.csv) of the charts.
 
-The benchmark was compiled with GCC 6.1 and run on Linux with an Intel i5-5200u and 8Go of RAM.
+The benchmark was compiled with GCC 6.1 and ran on Linux with an Intel i5-5200u and 8Go of RAM.
 
 <h2>Benchmark</h2>
 
@@ -235,7 +235,7 @@ For each key k in [0, nb_entries), we insert the key-value pair (k, 1) in the ma
 
 
 
-<h4>Random Inserts: Execution Time (integers)</h4>
+<h4>Random inserts: execution time (integers)</h4>
 Before the test, we generate a vector with the values [0, nb_entries) and shuffle this vector. 
 Then for each value k in the vector, we insert the key-value pair (k, 1) in the map.
 
@@ -247,7 +247,7 @@ Then for each value k in the vector, we insert the key-value pair (k, 1) in the 
 
 
 
-<h4>Deletes: Execution Time (integers)</h4>
+<h4>Deletes: execution time (integers)</h4>
 Before the test, we insert nb_entries elements in the map as in the sequential insert test. We then delete each key one by one in the same order as they were inserted.
 
 <div class="chart" id="delete-runtime"></div>
@@ -258,7 +258,7 @@ Before the test, we insert nb_entries elements in the map as in the sequential i
 
 
 
-<h4>Sequential Reads: Execution Time (integers)</h4>
+<h4>Sequential reads: execution time (integers)</h4>
 Before the test, we insert nb_entries elements in the map as in the sequential insert test. We then read each key-value pair in the same order as they were inserted.
 
 <div class="chart" id="sequentialread-runtime"></div>
@@ -269,7 +269,7 @@ Before the test, we insert nb_entries elements in the map as in the sequential i
 
 
 
-<h4>Random Reads: Execution Time (integers)</h4>
+<h4>Random reads: execution time (integers)</h4>
 Before the test, we insert nb_entries elements in the map as in the sequential insert test. We then read each key-value pair once in a random order.
 
 <div class="chart" id="randomread-runtime"></div>
@@ -280,7 +280,7 @@ Before the test, we insert nb_entries elements in the map as in the sequential i
 
 
 
-<h4>Iteration: Execution Time (integers)</h4>
+<h4>Iteration: execution time (integers)</h4>
 Before the test, we insert nb_entries elements in the map as in the sequential insert test. We then use the map iterators to read all the keys-values.
 
 <div class="chart" id="iteration-runtime"></div>
@@ -291,7 +291,7 @@ Before the test, we insert nb_entries elements in the map as in the sequential i
 
 
 
-<h4>Memory Usage (integers)</h4>
+<h4>Memory usage (integers)</h4>
 Before the sequential insert benchmark finishes, we measure the memory that the benchmark is using.
 
 <div class="chart" id="sequential-memory"></div>
@@ -309,7 +309,7 @@ For the string tests, we use maps with std::string as key and int64_t as value.
 When we generate a string key, we stringify the entry number, [0, nb_entries), which we append to a string containing 50 times the letter 'a'. For example, we get something like "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa35" as key for the entry 35.
 
 
-<h4>Inserts: Execution Time (strings)</h4>
+<h4>Inserts: execution time (strings)</h4>
 For each entry we generate a string as key and insert it with the value 1.
 
 <div class="chart" id="insertstring-runtime"></div>
@@ -320,7 +320,7 @@ For each entry we generate a string as key and insert it with the value 1.
 
 
 
-<h4>Deletes: Execution Time (strings)</h4>
+<h4>Deletes: execution time (strings)</h4>
 Before the test, we insert nb_entries elements in the map as in the insert test. We then delete each key one by one in the same order as they were inserted.
 
 <div class="chart" id="deletestring-runtime"></div>
@@ -331,7 +331,7 @@ Before the test, we insert nb_entries elements in the map as in the insert test.
 
 
 
-<h4>Reads: Execution Time (strings)</h4>
+<h4>Reads: execution time (strings)</h4>
 Before the test, we insert nb_entries elements in the map as in the insert test. We then read each key-value pair in the same order as they were inserted.
 
 <div class="chart" id="readstring-runtime"></div>
@@ -342,7 +342,7 @@ Before the test, we insert nb_entries elements in the map as in the insert test.
 
 
 
-<h4>Memory Usage (strings)</h4>
+<h4>Memory usage (strings)</h4>
 Before the insert benchmark finishes, we measure the memory that the benchmark is using.
 
 <div class="chart" id="insertstring-memory"></div>
@@ -352,9 +352,9 @@ Before the insert benchmark finishes, we measure the memory that the benchmark i
 
 <h2>Analysis</h2>
 
-The hopscotch_map is doing well with integers keys but not so much with string keys. The main advantages of the hopscotch_map is its cache friendliness, when searching for a key on collision we go trough the bucket array in sequential order. With strings we loose this advantage, as std::string hold pointers to a heap-allocated area. When comparing keys, we have to read this area incurring a cache-miss. If the key has pointers to other parts of the memory and we have to read them to calculate the hash, hopscotch_map may not be the best choice.
+The hopscotch_map is doing well with integer keys but not so much with string keys. The main advantage of the hopscotch_map is its cache friendliness, when searching for a key on collision we go trough the bucket array in a sequential order. With strings we loose this advantage as std::string holds pointers to a heap-allocated area. When comparing keys, we have to read this area incurring a cache-miss. If the key has pointers to other parts of the memory and we have to read them to compare the key with another one, hopscotch_map may not be the best choice.
 
-For the integer part, we can see that the hopscotch_map is able to holds its game against Google dense_hash_map. The cache-friendliness of hopscotch_map offers some advantages over the dense_hash_map when iterating trough the map. Both are performing way better than the other hash-map except for the memory usage where sparse hash obviously remains the king.
+For the integer part, we can see that the hopscotch_map is able to holds its game against Google dense_hash_map. The cache-friendliness of hopscotch_map offers some advantages over the dense_hash_map when iterating trough the map. Both are performing way better than the other hash map except for the memory usage where sparse hash obviously remains the king.
 
 More tests should be done on hopscotch_map by varying the neighborhood size. Here 62 was used a neighborhood size.
 
