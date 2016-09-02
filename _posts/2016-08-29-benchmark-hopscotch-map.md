@@ -205,7 +205,9 @@ comments: true
     }
 </style>
 
-This benchmark is based on <http://incise.org/hash-table-benchmarks.html> with a few modifications:
+We are going to compare hopscotch_map to Google's sparse and dense hash map, Boost unordered_map, GCC std::unordered_map implementation and QHash from Qt.
+
+The benchmark is based on <http://incise.org/hash-table-benchmarks.html> with a few modifications:
 
 * The glib, python and ruby hash maps were removed
 * The hopscotch_map hash map was added (which is the one we want to test in the end)
