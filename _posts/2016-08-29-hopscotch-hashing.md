@@ -22,7 +22,7 @@ This article presents an implementation of a single-threaded hash map using the 
 
 Hopscotch hashing was introduced by Herlihy et al. 2008[^1] and resolves collisions using [open addressing](https://en.wikipedia.org/wiki/Open_addressing) (the records are stored in the bucket array itself and not trough chaining). The algorithm presented in the paper is a multi-threaded hash map with a high throughput. Here we will focus on a single-thread implementation inspired by this paper.
 
-The main idea behind the algorithm is the notion of neighborhood. Each bucket B has a neighborhood of size H, which is the bucket B and the H-1 buckets following in the bucket array. When we are searching for a value, we will search it in its initial bucket and the neighborhood of the bucket. On insert, we will keep the inserted value in the neighborhood of its initial bucket trough swapping.
+The main idea behind the algorithm is the notion of neighborhood. Each bucket B has a neighborhood of size H, which is the bucket B and the H-1 buckets following it in the bucket array. When we are searching for a value, we will search it in its initial bucket and the neighborhood of the bucket. On insert, we will keep the inserted value in the neighborhood of its initial bucket through swapping.
 
 We will describe how we proceed to insert, find and erase elements in the hash map.
 
@@ -32,17 +32,17 @@ The implementation can be found on [GitHub](https://github.com/Tessil/hopscotch-
 
 ### Insert
 
-To insert an item *x* in the hash map where *hash(x) % nb_buckets = i*, we need:
+To insert an item *x* in the hash map, where *hash(x) % nb_buckets = i*, we need:
 
-* From the bucket *i*, search for an empty bucket *j* trough linear probing.
-* If the bucket *j* is in the neighborhood of *i* (i.e. *j - i < H*), insert it here and we are done.
+* From the bucket *i*, search for an empty bucket *j* through linear probing.
+* If the bucket *j* is in the neighborhood of *i* (i.e. *j - i < H*), insert it there and we are done.
 * Otherwise, find in the interval *[j - H + 1, j)*, an item *y* where *hash(y) % nb_buckets >= j - H*. Swap the bucket for the item *y* with the empty bucket *j* and repeat until *j* is in the neighborhood of *i*.
 
 #### Example
 
 An example with images will be easier.
 
-We have a bucket array of size 10 with 7 elements. The little number on the bottom right corner of each entry is the bucket the item really belongs to (the *i* bucket, *hash(item) % nb_buckets*).
+We have a bucket array of size 10 with 7 elements. The little number on the bottom right corner of each entry is the bucket where the item really belongs to (the *i* bucket, *hash(item) % nb_buckets*).
 
 In this example, the size of the neighborhood (*H*) is equal to 3. For example the neighborhood of bucket 1 is composed of the buckets 1, 2 and 3.
 
@@ -51,7 +51,7 @@ In this example, the size of the neighborhood (*H*) is equal to 3. For example t
   <figcaption class="image_caption">Initial situation</figcaption>
 </figure>
 
-Let's say we want to insert the item 'd' with *hash('d') % 10 = 2*. From the bucket 2, we start to search for an empty bucket trough linear probing. 
+Let's say we want to insert the item 'd' with *hash('d') % 10 = 2*. From the bucket 2, we start to search for an empty bucket through linear probing. 
 
 <figure>
   <img src="{{ site.url }}/images/hopscotch_example_fig_2.png"  class="image_caption" />
@@ -98,9 +98,9 @@ We are now good, the neighborhood constraint is still valid.
 
 But what happen if there is no candidate for swapping or the neighborhood of the bucket is full (example bucket 1 has already H values belonging to it)? As the paper suggests, we resize the bucket array and we rehash, the modulo will be bigger and so the elements will end-up in different buckets.
 
-Now this is all good but there is one thing still missing which the paper did not mention. What if we have more than H values with the exact same hash? Resizing the bucket array will not change anything as they will still end-up in the same bucket. If the hash function is good and the neighborhood size is not too small, it should not happen often but it may still happen.
+Now this is all good but there is one thing still missing which the paper did not mention. What if we have more than H values with the exact same hash? Resizing the bucket array will not change anything as they will still end-up to belong to the same bucket. If the hash function is good and the neighborhood size is not too small, it should not happen often but it may still happen.
 
-To solve the problem, a linked list was added in addition of the bucket array. This linked list will contain overflow elements. If we can not insert the item in the neighborhood of its bucket, even trough swapping and rehash, it will go into the overflow list and a tag will be added to the bucket to notify that some elements of the bucket are in the overflow list.
+To solve the problem, a linked list was added in addition to the bucket array. This linked list will contain overflow elements. If we can not insert the item in the neighborhood of its bucket, even through swapping and rehash, it will go into the overflow list and a tag will be added to the bucket to notify that some elements belonging to the bucket are in the overflow list.
 
 This will dismiss our cache locality, but it should be really rare for elements to end-up in the overflow list.
 
@@ -133,12 +133,12 @@ This bitmap serves multiple purposes:
 
 ### The overflow list
 
-The overflow list is just an std::list\<std::pair\<const Key, Value\>\>. When an element can not be stored in the bucket array, it will be pushed back into the list.
+The overflow list is just a std::list\<std::pair\<const Key, Value\>\>. When an element can not be stored in the bucket array, it will be pushed back into the list.
 
 
 ## Conclusion
 
-This algorithm offers good performance thanks to its cache locality. This advantage is only valid if the key doesn't use some pointers to other parts of the memory to check its equality with another key. If it is the case, the algorithm will not be as efficient.
+This algorithm offers good performances thanks to its cache locality. This advantage is only valid if the key doesn't use some pointers to other parts of the memory to check its equality with another key. If it is the case, the algorithm will not be as efficient.
 
 It also offers some upper-bound when we are searching for an element of NeighborhoodSize + \|OverflowList\| operations, where the size of OverflowList is usually equal to 0. 
 

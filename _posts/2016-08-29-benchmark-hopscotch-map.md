@@ -162,17 +162,17 @@ comments: true
     }
 </style>
 
-We are going to compare hopscotch_map to Google's sparse and dense hash map, Boost unordered_map, GCC std::unordered_map implementation and QHash from Qt.
+We are going to compare [hopscotch_map](https://github.com/Tessil/hopscotch-map) to Google sparse and dense hash map, Boost unordered_map, GCC std::unordered_map implementation and QHash from Qt.
 
 The benchmark is based on <http://incise.org/hash-table-benchmarks.html> with a few modifications:
 
-* The glib, python and ruby hash maps were removed
-* The hopscotch_map hash map was added (which is the one we want to test in the end)
-* We now use std::string as key instead of const char * for the string tests
-* The strings used as keys have now a minimal size of 50 instead of being simple numbers which have been stringified
-* Some read and iteration tests were added
-* On random tests, we make sure all keys appear only once during the tests
-* We use std::hash\<T\> as hash function for all maps
+* The glib, python and ruby hash maps were removed.
+* The hopscotch_map hash map was added (which is the one we want to test in the end).
+* We now use std::string as key instead of const char * for the string tests.
+* The strings used as keys have now a minimal size of 50 instead of being simple numbers which have been stringified.
+* Some read and iteration tests were added.
+* On random tests, we make sure all keys appear only once during the tests.
+* We use std::hash\<T\> as hash function for all maps.
 
 The fork of the benchmark can be found on [GitHub](https://github.com/Tessil/hash-table-shootout). As well as the [raw results]({{ site.url }}/other/hopscotch_map_benchmark_raw_results.csv) of the charts.
 
@@ -203,7 +203,7 @@ Then for each value k in the vector, we insert the key-value pair (k, 1) in the 
 <ul class="choices" id="random-runtime-choices"></ul>
 <div class="chart-after-space"></div>
 
-
+The roller-coaster shape of Google sparse_hash_map is "normal", the map seems to be quite sensitive to the order the values are inserted. Depending on the size of the vectors, std::shuffle will shuffle the vectors in completely different ways even if the seed is the same.
 
 
 <h4>Deletes: execution time (integers)</h4>
@@ -311,15 +311,16 @@ Before the insert benchmark finishes, we measure the memory that the benchmark i
 
 <h2>Analysis</h2>
 
-The hopscotch_map is doing well with integer keys but not so much with string keys. The main advantage of the hopscotch_map is its cache friendliness, when searching for a key on collision we go trough the bucket array in a sequential order. With strings we loose this advantage as std::string holds pointers to a heap-allocated area. When comparing keys, we have to read this area incurring a cache-miss. If the key has pointers to other parts of the memory and we have to read them to compare the key with another one, hopscotch_map may not be the best choice.
+The hopscotch_map is doing well with integer keys but not so much with string keys. The main advantage of the hopscotch_map is its cache friendliness, when searching for a key on collision we go through the bucket array in a sequential order in memory. With strings we loose this advantage as std::string holds pointers to a heap-allocated area. When comparing keys, we have to read this area incurring a cache-miss. If the key has pointers to other parts of the memory and we have to read them to compare the key with another one, hopscotch_map may not be the best choice.
 
-For the integer part, we can see that the hopscotch_map is able to holds its game against Google dense_hash_map. The cache-friendliness of hopscotch_map offers some advantages over the dense_hash_map when iterating trough the map. Both are performing way better than the other hash map except for the memory usage where sparse hash obviously remains the king.
+For the integer part, we can see that the hopscotch_map is able to hold its game against Google dense_hash_map. The cache-friendliness of hopscotch_map offers some advantages over the dense_hash_map when iterating through the map. Both are performing way better than the other hash maps except for the memory usage where sparse_hash_map obviously remains the king.
+
 
 More tests should be done on hopscotch_map by varying the neighborhood size. Here 62 was used a neighborhood size.
 
 In conclusion, if the drawbacks of hopscotch_map are not a problem for you, it may be a good alternative to other hash maps if the key used by the map doesn't use pointers to other parts of the memory to check its equality with another key.
 
-
+It offers comparable performances to dense_hash_map in these cases but without the need to reserve some values of the key to mark the key a deleted or empty.
 
 
 
