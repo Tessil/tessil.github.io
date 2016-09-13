@@ -320,7 +320,7 @@ More tests should be done on hopscotch_map by varying the neighborhood size. Her
 
 In conclusion, if the drawbacks of hopscotch_map are not a problem for you, it may be a good alternative to other hash maps if the key used by the map doesn't use pointers to other parts of the memory to check its equality with another key.
 
-It offers comparable performances to dense_hash_map in these cases but without the need to reserve some values of the key to mark the key a deleted or empty.
+It offers comparable performances to dense_hash_map in these cases but without the need to reserve some values of the key to mark the key as deleted or empty.
 
 
 
