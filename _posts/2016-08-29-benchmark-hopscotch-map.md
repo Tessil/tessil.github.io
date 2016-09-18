@@ -162,9 +162,9 @@ comments: true
     }
 </style>
 
-We are going to compare [hopscotch_map](https://github.com/Tessil/hopscotch-map) to Google sparse and dense hash map, Boost unordered_map, GCC std::unordered_map implementation and QHash from Qt.
+We are going to compare [hopscotch_map](https://github.com/Tessil/hopscotch-map) to Google sparse and dense hash map, Boost unordered_map, GCC std::unordered_map implementation and QHash from Qt to see how hopscotch hashing performs.
 
-The benchmark is based on <http://incise.org/hash-table-benchmarks.html> with a few modifications:
+To do so we will use the benchmark <http://incise.org/hash-table-benchmarks.html> with a few modifications:
 
 * The glib, python and ruby hash maps were removed.
 * The hopscotch_map hash map was added (which is the one we want to test in the end).
