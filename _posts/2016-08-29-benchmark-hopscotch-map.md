@@ -311,14 +311,14 @@ Before the insert benchmark finishes, we measure the memory that the benchmark i
 
 <h2>Analysis</h2>
 
-The hopscotch_map is doing well with integer keys but not so much with string keys. The main advantage of the hopscotch_map is its cache friendliness, when searching for a key on collision we go through the bucket array in a sequential order in memory. With strings we loose this advantage as std::string holds pointers to a heap-allocated area. When comparing keys, we have to read this area incurring a cache-miss. If the key has pointers to other parts of the memory and we have to read them to compare the key with another one, hopscotch_map may not be the best choice.
+The hopscotch_map is doing well with integer keys but not so much with string keys. The main advantage of the hopscotch_map is its cache friendliness, when searching for a key on collision we go through the bucket array in a sequential order in memory. With strings we loose this advantage as std::string holds pointers to a heap-allocated area. When comparing keys, we have to read this area incurring a cache-miss. If the key has pointers to other parts of the memory and we have to read them to compare the key with another one, hopscotch_map may not be the best choice. The keys also need to be copied on rehash or when displacements occur on insert, causing a slow down on insert when the key is big.
 
 For the integer part, we can see that the hopscotch_map is able to hold its game against Google dense_hash_map. The cache-friendliness of hopscotch_map offers some advantages over the dense_hash_map when iterating through the map. Both are performing way better than the other hash maps except for the memory usage where sparse_hash_map obviously remains the king.
 
 
 More tests should be done on hopscotch_map by varying the neighborhood size. Here 62 was used a neighborhood size.
 
-In conclusion, if the drawbacks of hopscotch_map are not a problem for you, it may be a good alternative to other hash maps if the key used by the map doesn't use pointers to other parts of the memory to check its equality with another key.
+In conclusion, if the drawbacks of hopscotch_map are not a problem for you, it may be a good alternative to other hash maps if the key used by the map doesn't use pointers to other parts of the memory to check its equality with another key and if the copy of the key is fast.
 
 It offers comparable performances to dense_hash_map in these cases but without the need to reserve some values of the key to mark the key as deleted or empty.
 
