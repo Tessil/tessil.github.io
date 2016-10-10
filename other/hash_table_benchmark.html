@@ -88,9 +88,9 @@
         
         // Insert checkboxes 
         $.each(dataset, function(key, val) {
-            $(choices_container).append("<br/>" + 
-                    "<input type='checkbox' name='" + key +"' checked='checked' id='id" + key + "'></input>" +
-                    "<label for='id" + key + "'>" + val.label + "</label>");
+            $(choices_container).append( 
+                "<li><input type='checkbox' name='" + key +"' checked='checked' id='id" + key + "'></input>" +
+                "<label for='id" + key + "'>" + val.label + "</label></li>");
         });
         
         $(choices_container).find("input").click(plot_according_to_choices);
@@ -172,66 +172,83 @@
         font-size: small;
         color: #666;
     }
+    .choices li {
+        display: block;
+        float: left;
+        width: 50%;
+    }
+    div.chart-after-space {
+        margin-bottom: 8.0em;
+    }
 </style>
-
 
 
 <h3>Sequential inserts: execution time (integers)</h3>
 <div class="chart" id="sequential-runtime"></div>
-<div class="choices" id="sequential-runtime-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="sequential-runtime-choices"></ul>
+<div class="chart-after-space"></div>
 
 <h3>Random shuffle inserts: execution time (integers)</h3>
 <div class="chart" id="randomshufflerange-runtime"></div>
-<div class="choices" id="randomshufflerange-runtime-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="randomshufflerange-runtime-choices"></ul>
+<div class="chart-after-space"></div>
 
 <h3>Random full inserts: execution time (integers)</h3>
 <div class="chart" id="randomfull-runtime"></div>
-<div class="choices" id="randomfull-runtime-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="randomfull-runtime-choices"></ul>
+<div class="chart-after-space"></div>
 
 
 
 <h3>Deletes: execution time (integers)</h3>
 <div class="chart" id="delete-runtime"></div>
-<div class="choices" id="delete-runtime-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="delete-runtime-choices"></ul>
+<div class="chart-after-space"></div>
 
 
 
 <h3>Sequential reads: execution time (integers)</h3>
 <div class="chart" id="sequentialread-runtime"></div>
-<div class="choices" id="sequentialread-runtime-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="sequentialread-runtime-choices"></ul>
+<div class="chart-after-space"></div>
 
 <h3>Random shuffle reads: execution time (integers)</h3>
 <div class="chart" id="randomshufflerangeread-runtime"></div>
-<div class="choices" id="randomshufflerangeread-runtime-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="randomshufflerangeread-runtime-choices"></ul>
+<div class="chart-after-space"></div>
 
 <h3>Random full reads: execution time (integers)</h3>
 <div class="chart" id="randomfullread-runtime"></div>
-<div class="choices" id="randomfullread-runtime-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="randomfullread-runtime-choices"></ul>
+<div class="chart-after-space"></div>
 
 <h3>Random full miss reads: execution time (integers)</h3>
 <div class="chart" id="randomfullmissread-runtime"></div>
-<div class="choices" id="randomfullmissread-runtime-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="randomfullmissread-runtime-choices"></ul>
+<div class="chart-after-space"></div>
 
 <h3>Iteration: execution time (integers)</h3>
 <div class="chart" id="iteration-runtime"></div>
-<div class="choices" id="iteration-runtime-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="iteration-runtime-choices"></ul>
+<div class="chart-after-space"></div>
 
 
 
 
 <h3>Memory usage of random full inserts (integers)</h3>
 <div class="chart" id="randomfull-memory"></div>
-<div class="choices" id="randomfull-memory-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="randomfull-memory-choices"></ul>
+<div class="chart-after-space"></div>
 
 
 
@@ -240,55 +257,65 @@
 
 <h3>Inserts: execution time (small strings)</h3>
 <div class="chart" id="insertsmallstring-runtime"></div>
-<div class="choices" id="insertsmallstring-runtime-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insertsmallstring-runtime-choices"></ul>
+<div class="chart-after-space"></div>
 
 <h3>Deletes: execution time (small strings)</h3>
 <div class="chart" id="deletesmallstring-runtime"></div>
-<div class="choices" id="deletesmallstring-runtime-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="deletesmallstring-runtime-choices"></ul>
+<div class="chart-after-space"></div>
 
 <h3>Reads: execution time (small strings)</h3>
 <div class="chart" id="readsmallstring-runtime"></div>
-<div class="choices" id="readsmallstring-runtime-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="readsmallstring-runtime-choices"></ul>
+<div class="chart-after-space"></div>
 
 <h3>Miss reads: execution time (small strings)</h3>
 <div class="chart" id="missreadsmallstring-runtime"></div>
-<div class="choices" id="missreadsmallstring-runtime-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="missreadsmallstring-runtime-choices"></ul>
+<div class="chart-after-space"></div>
 
 <h3>Memory usage of inserts (small strings)</h3>
 <div class="chart" id="insertsmallstring-memory"></div>
-<div class="choices" id="insertsmallstring-memory-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insertsmallstring-memory-choices"></ul>
+<div class="chart-after-space"></div>
 
 
 
 <h3>Inserts: execution time (strings)</h3>
 <div class="chart" id="insertstring-runtime"></div>
-<div class="choices" id="insertstring-runtime-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insertstring-runtime-choices"></ul>
+<div class="chart-after-space"></div>
 
 <h3>Deletes: execution time (strings)</h3>
 <div class="chart" id="deletestring-runtime"></div>
-<div class="choices" id="deletestring-runtime-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="deletestring-runtime-choices"></ul>
+<div class="chart-after-space"></div>
 
 <h3>Reads: execution time (strings)</h3>
 <div class="chart" id="readstring-runtime"></div>
-<div class="choices" id="readstring-runtime-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="readstring-runtime-choices"></ul>
+<div class="chart-after-space"></div>
 
 <h3>Miss reads: execution time (strings)</h3>
 <div class="chart" id="missreadstring-runtime"></div>
-<div class="choices" id="missreadstring-runtime-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="missreadstring-runtime-choices"></ul>
+<div class="chart-after-space"></div>
 
 <h3>Memory usage of inserts (strings)</h3>
 <div class="chart" id="insertstring-memory"></div>
-<div class="choices" id="insertstring-memory-choices"></div>
 <div class="xaxis-title">number of entries in hash table</div>
+<ul class="choices" id="insertstring-memory-choices"></ul>
+<div class="chart-after-space"></div>
 
 
 </body>
