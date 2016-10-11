@@ -224,7 +224,7 @@ For each key k in [0, nb_entries), we insert the key-value pair (k, 1) in the ma
 <ul class="choices" id="sequential-runtime-choices"></ul>
 <div class="chart-after-space"></div>
 
-
+Note that GCC implementation of std::hash<int64_t> uses an identity hash for positive int64_t. Sequential inserts will thus insert values with sequential hashes.
 
 
 <h4>Random shuffle inserts: execution time (integers)</h4>
