@@ -191,7 +191,7 @@ comments: true
 * Tests on miss reads were added.
 * Some tests on small strings, where small string optimization occurs, were added .
 * The [sparsepp hash map](https://github.com/greg7mdp/sparsepp) was added to the benchmark. 
-* The [rabit unordered_map](https://github.com/tjizep/rabbit), [emilib hash map](https://github.com/emilk/emilib) and [sherwood_map](https://github.com/skarupke/sherwood_map) were also added. To avoid having too much jumble on the charts, only the major implementations were kept on this page.  A [separate page]({{ site.url }}/other/hash_table_benchmark.html) (warning, the page may be slow to load) provides the full data with these three implementations.
+* The [rabbit unordered_map](https://github.com/tjizep/rabbit), [emilib hash map](https://github.com/emilk/emilib) and [sherwood_map](https://github.com/skarupke/sherwood_map) were also added. To avoid having too much jumble on the charts, only the major implementations were kept on this page.  A [separate page]({{ site.url }}/other/hash_table_benchmark.html) (warning, the page may be slow to load) provides the full data with these three implementations.
 * We now use -O3 -march=native as compilation flags instead of the -O2 used in the [incise](http://incise.org/hash-table-benchmarks.html) benchmark.
 
 
