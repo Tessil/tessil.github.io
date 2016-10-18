@@ -5,8 +5,8 @@ date:   2016-08-29 11:00:00 +0100
 comments: true
 ---
 
-<script language="javascript" type="text/javascript" src="https://tessil.github.io/js/jquery.min.js"></script>
-<script language="javascript" type="text/javascript" src="https://tessil.github.io/js/jquery.flot.min.js"></script>
+<script language="javascript" type="text/javascript" src="{{ site.url }}/js/jquery.min.js"></script>
+<script language="javascript" type="text/javascript" src="{{ site.url }}/js/jquery.flot.min.js"></script>
 <script>
     $("<div id='tooltip'></div>").css({
                                     position: "absolute",
