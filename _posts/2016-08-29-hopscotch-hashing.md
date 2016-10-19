@@ -98,7 +98,7 @@ We are now good, the neighborhood constraint is still valid.
 
 But what happen if there is no candidate for swapping or the neighborhood of the bucket is full (example bucket 1 has already H values belonging to it)? As the paper suggests, we resize the bucket array and we rehash, the modulo will be bigger and so the elements will end-up in different buckets.
 
-Now this is all good but there is one thing still missing which the paper did not mention. What if we have more than H values with the exact same hash? Resizing the bucket array will not change anything as they will still end-up to belong to the same bucket. If the hash function is good and the neighborhood size is not too small, it should not happen often but it may still happen.
+Now this is all good but there is one thing still missing which the paper did not mention. What if we have more than H values for which the hash function returns the exact same hash? Resizing the bucket array will not change anything as they will still end-up to belong to the same bucket. Even if the modulo *nb_buckets* gets bigger, if *hash(x)* return the same value for different values of *x*, they will all belong to the same bucket. If the hash function is good and the neighborhood size is not too small, it should never really happen but it still may.
 
 To solve the problem, a linked list was added in addition to the bucket array. This linked list will contain overflow elements. If we can not insert the item in the neighborhood of its bucket, even through swapping and rehash, it will go into the overflow list and a tag will be added to the bucket to notify that some elements belonging to the bucket are in the overflow list.
 
