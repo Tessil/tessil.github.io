@@ -106,7 +106,7 @@ This will dismiss our cache locality, but it should be really rare for elements 
 
 ### Find
 
-To find an element in the hash table, we just compute its bucket with hash(element) % nb_buckets. We then search in the bucket and its neighbors. If the bucket has been marked as overflow, we also do a linear search in the overflow list.
+To find an element in the hash table, we just compute its bucket with *hash(element) % nb_buckets*. We then search in the bucket and its neighbors. If the bucket has been marked as overflow, we also do a linear search in the overflow list.
 
 ### Erase
 

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Benchmark of hopscotch_map"
+title:  "Benchmark of hopscotch_map against popular hash tables"
 date:   2016-08-29 11:00:00 +0100
 comments: true
 ---
