@@ -454,16 +454,16 @@ Before the inserts benchmark finishes, we measure the memory that the benchmark 
 
 <h2>Analysis</h2>
 
-The hopscotch_map is doing well with integer and small string keys but not as much with bigger string keys. The main advantage of hopscotch_map is its cache friendliness, when searching for a key on collision we go through the bucket array in a sequential order in memory, with only one cache line load in the best cases (if the key is in the first couple of neighbors depending on the size of the key, the value and the cache). With strings we lose this advantage as a big enough std::string holds pointers to a heap-allocated area. When comparing keys, we have to read this area incurring an extra cache-miss each time we want to compare the keys. If the key has pointers to other parts of the memory and we have to read them to compare the key with another one, hopscotch_map may not be the best choice as its memory overhead may not be worth it. 
+The hopscotch_map is doing well with integer and small string keys but not as much with bigger string keys. The main advantage of hopscotch_map is its cache friendliness, when searching for a key on collision we go through the bucket array in a sequential order in memory, with only one cache line load in the best cases (if the key is in the first couple of neighbors depending on the size of the key, the value and the cache). With strings we lose this advantage as a big enough std::string holds pointers to a heap-allocated area. When comparing keys, we have to read this area incurring an extra cache-miss each time we want to compare the keys. If the key has pointers to other parts of the memory and we have to read them to compare the key with another one, hopscotch_map may not be the best choice as its memory overhead on rehash may not be worth it. 
 
-For the integer and small string part, we can see that hopscotch_map is able to hold its game against Google dense_hash_map while using less memory. Both are performing way better than the other hash maps on this page (other hash maps are present [here]({{ site.url }}/other/hash_table_benchmark.html), slow load link) except for the memory usage where sparsepp and sparse_hash_map obviously remain the kings (with sparsepp offering an impressive balance between memory usage and speed).
+For the integer and small string part, we can see that hopscotch_map is able to hold its game against dense_hash_map while using less memory. Both are performing way better than the other hash maps on this page (other hash maps are present [here]({{ site.url }}/other/hash_table_benchmark.html), slow load link) except for the memory usage where sparsepp and sparse_hash_map obviously remain the kings (with sparsepp offering an impressive balance between memory usage and speed).
 
 
-More tests could be done with different hash functions. We are using the GCC implementation of std::hash as hash function in all tests for a fair comparison. Some other hash functions may give better results on some implementations. 
+More tests could be done with different hash functions. We are using the GCC implementation of std::hash as hash function in all our tests for a fair comparison. Some other hash functions may give better results on some hash map implementations. 
 
-The benchmark was oriented toward hash maps. Better structures like tries could be used for the string mapping, but std::string is a familiar example to test bigger keys than int64_t and incurring a cache-miss on comparison if big enough.
+The benchmark was oriented toward hash maps. Better structures like tries could be used for the string mapping, but std::string is a familiar example to test bigger keys than int64_t and it incurs a cache-miss on comparison if big enough.
 
-In conclusion, if the drawbacks of hopscotch_map are not a problem for you, it may be a good alternative to other hash maps if the key used by the map doesn't use pointers to other parts of the memory to check its equality with another key.
+In conclusion, if the drawbacks of hopscotch_map are not a problem for you, it may be a good alternative to other hash maps if each key comparison doesn't incur a cache-miss.
 
-It offers comparable performances to dense_hash_map in these cases but without the need to reserve some values of the key to mark the key as deleted or empty.
+It offers comparable performances to dense_hash_map in these cases using less memory and without the need to reserve some values of the key to mark the key as deleted or empty.
 
