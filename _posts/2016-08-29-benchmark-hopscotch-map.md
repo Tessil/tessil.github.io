@@ -330,7 +330,7 @@ Before the random full inserts benchmark finishes, we measure the memory that th
 
 For the small string tests, we use maps with std::string as key and int64_t as value. 
 
-When we generate a string key, we stringify the entry number, [0, nb_entries). This result in a small string which doesn't need any heap allocation as GCC 6.1 will use small string optimization for any string smaller than 16 characters (which is our case for the range of strings we generate for the tests).
+When we generate a string key, we stringify the entry number, [0, nb_entries). This result in a small string which doesn't need any heap allocation as GCC 6.1 will use small string optimization for any string smaller than 16 characters (which is our case for the range of strings we generate for the tests). The size of each std::string is 32 bytes.
 
 
 <h4>Inserts: execution time (small strings)</h4>
