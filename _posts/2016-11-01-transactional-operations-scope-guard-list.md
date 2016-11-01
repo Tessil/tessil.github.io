@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Transactional operations made easy through lists of scope guards"
-date:   2016-10-28 10:00:00 +0100
+date:   2016-11-01 10:00:00 +0100
 comments: true
 ---
 
