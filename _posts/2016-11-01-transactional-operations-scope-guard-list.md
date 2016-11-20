@@ -57,7 +57,7 @@ scope_guard<Funct> make_sg(Funct function) {
 }
 ```
 
-The scope guard just takes a function in parameter, store it and execute it on its destruction, except if `dismiss()` was called.
+The scope guard just takes a function in parameter, stores it and executes it on its destruction, except if `dismiss()` was called.
 
 To demonstrate its usage, we will create a register of employees where each employee has an id and a name.
 
@@ -142,8 +142,6 @@ public:
       
       dismiss();
     }
-    
-    m_functions.clear();
   }
  
   void dismiss() noexcept {
@@ -156,7 +154,7 @@ private:
 };
 ```
 
-We are still missing a way to add a function to our `scope_guard_list`. We could use a simple the following code.
+We are still missing a way to add a function to our `scope_guard_list`. We could use a simple add function like the following.
 
 ```c++
 template<typename Funct>
@@ -167,7 +165,7 @@ void add(Funct function) {
 }
 ```
 
-But we have two problems. The `m_functions.push_back` operation can throw an exception if it needs to do some allocation (in case we didn't reserve enough space in the vector). Also, the construction of `std::function<void()>` could do the same if the lambda is big enough to hinder the small size optimization of `std::function` or if the implementation doesn't do this optimization.
+But we have two problems. The `m_functions.push_back` operation can throw an exception if it needs to do some allocation (in case we didn't reserve enough space in the vector). Also, the construction of `std::function<void()>` could do the same if the lambda is big enough to hinder the small size optimization of `std::function` or if the implementation doesn't do this optimization. In these cases, the rollback function will not be in the list even if the operation it should rollback has already been executed.
 
 Instead we will use another way which tie together the function we want to execute and its rollback.
 
@@ -197,7 +195,7 @@ If the `execute_function` fails, we don't want to execute the associated rollbac
 
 This way we also force the programmer to tie each operation and its rollback together which may avoid some mistakes and offer some implicit documentation.
 
-With all that let's revise our `add_batch` of our `employee_register`.
+With all that, let's revise our `add_batch` of our `employee_register`.
 
 
 ```c++
