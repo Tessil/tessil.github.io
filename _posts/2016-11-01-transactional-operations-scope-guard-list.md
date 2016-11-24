@@ -167,7 +167,7 @@ void add(Funct function) {
 
 But we have two problems. The `m_functions.push_back` operation can throw an exception if it needs to do some allocation (in case we didn't reserve enough space in the vector). Also, the construction of `std::function<void()>` could do the same if the lambda is big enough to hinder the small size optimization of `std::function` or if the implementation doesn't do this optimization. In these cases, the rollback function will not be in the list even if the operation it should rollback has already been executed.
 
-Instead we will use another way which tie together the function we want to execute and its rollback.
+Instead we will use another way which ties together the function we want to execute and its rollback.
 
 ```c++
 template<typename ExecFunct, typename RollbackFunct>
@@ -191,7 +191,7 @@ auto exec(ExecFunct execute_function, RollbackFunct rollback_function)
 
 We first create the `std::function<void()>` and add it to the vector. If anything goes wrong, `execute_function` was still not executed, so we are safe.
 
-If the `execute_function` fails, we don't want to execute the associated rollback operation. So we remove it from the vector. Otherwise, we are sure the function was well executed and that the rollback operation is in the vector.
+If the `execute_function` fails, we don't want to execute the associated rollback operation, so we remove it from the vector. Otherwise, we are sure the function was well executed and that the rollback operation is in the vector.
 
 This way we also force the programmer to tie each operation and its rollback together which may avoid some mistakes and offer some implicit documentation.
 
@@ -235,7 +235,7 @@ void add_batch(std::initializer_list<employee> employees) {
 }
 ```
 
-But take care as the macro hides the capture of the reference and may thus not be wise to use depending on your preferences.
+But take care, as the macro hides the capture of the reference and may thus not be wise to use depending on your preferences.
 
 In the end, the `scope_guard_list` allows us to easily put transactional operations together without worrying about the exit path our code will take.
 
