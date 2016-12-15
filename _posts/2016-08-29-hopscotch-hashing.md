@@ -18,9 +18,9 @@ comments: true
     
 </style>
 
-This article presents an implementation of a single-threaded hash map using the Hopscotch hashing technique. 
+This article presents an implementation of a single-threaded hash map using the hopscotch hashing technique. 
 
-Hopscotch hashing was introduced by Herlihy et al. 2008[^1] and resolves collisions using [open addressing](https://en.wikipedia.org/wiki/Open_addressing) (the records are stored in the bucket array itself and not trough chaining). The algorithm presented in the paper is a multi-threaded hash map with a high throughput. Here we will focus on a single-thread implementation inspired by this paper.
+Hopscotch hashing was introduced by Herlihy et al. 2008[^1] and resolves collisions using [open addressing](https://en.wikipedia.org/wiki/Open_addressing) (the records are stored in the bucket array itself and not through chaining). The algorithm presented in the paper is a multi-threaded hash map with a high throughput. Here we will focus on a single-thread implementation inspired by this paper.
 
 The main idea behind the algorithm is the notion of neighborhood. Each bucket B has a neighborhood of size H, which is the bucket B and the H-1 buckets following it in the bucket array. When we are searching for a value, we will search it in its initial bucket and the neighborhood of the bucket. On insert, we will keep the inserted value in the neighborhood of its initial bucket through swapping.
 

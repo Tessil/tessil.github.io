@@ -68,7 +68,7 @@ struct employee {
 };
 ```
 
-We want to have a fast access to each employee's data either with its id or its name. To do so we will use two maps, one `std::unordered_map<int, employee>` and one `std::map<std::string, employee>`. We should avoid to store two copies of the employee object and use some references but let's keep it simple for our example.
+We want to have a fast access to each employee's data either with its id or its name. To do so we will use two maps, one `std::unordered_map<int, employee>` and one `std::map<std::string, employee>`. We could use a vector if the IDs are contigous and we should avoid to store two copies of the employee object and use some references. Some copies operations could also be avoided in the next few snippets, but let's keep it simple for the sake of our example.
 
 With these two maps, we need to keep an invariant for the class. If an employee is in the first map, it should also be in the second map.
 
@@ -92,7 +92,7 @@ private:
 };
 ```
 
-All this works fine but let's say that for some reasons we would like to be able to insert a batch of emloyees to the register and it should be an atomic operation. Either they are all added to the register or none of them are.
+All this work fine but let's say that for some reasons we would like to be able to insert a batch of emloyees to the register and it should be an atomic operation. Either they are all added to the register or none of them are.
 
 A simple non-atomic way to do so will look like this.
 
@@ -193,7 +193,7 @@ We first create the `std::function<void()>` and add it to the vector. If anythin
 
 If the `execute_function` fails, we don't want to execute the associated rollback operation, so we remove it from the vector. Otherwise, we are sure the function was well executed and that the rollback operation is in the vector.
 
-This way we also force the programmer to tie each operation and its rollback together which may avoid some mistakes and offer some implicit documentation.
+This way we also force the programmer to tie each operation and its rollback together which may prevent some mistakes and offer some implicit documentation.
 
 With all that, let's revise our `add_batch` of our `employee_register`.
 
