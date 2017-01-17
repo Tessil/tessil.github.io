@@ -68,7 +68,7 @@ struct employee {
 };
 ```
 
-We want to have a fast access to each employee's data either with its id or its name. To do so we will use two maps, one `std::unordered_map<int, employee>` and one `std::map<std::string, employee>`. We could use a vector if the IDs are contigous and we should avoid to store two copies of the employee object and use some references. Some copies operations could also be avoided in the next few snippets, but let's keep it simple for the sake of our example.
+We want to have a fast access to each employee's data either with its id or its name. To do so we will use two maps, one `std::unordered_map<int, employee>` and one `std::map<std::string, employee>`. We could use a vector if the IDs are contigous and we should avoid to store two copies of the employee object and use some references. Some copies operations could also be avoided in the next few snippets, but let's keep it simple for the sake of our example (in a real situation it would be best to use something like [boost::bimap](http://www.boost.org/doc/libs/1_63_0/libs/bimap/doc/html/index.html)).
 
 With these two maps, we need to keep an invariant for the class. If an employee is in the first map, it should also be in the second map.
 
