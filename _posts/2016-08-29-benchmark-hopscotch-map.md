@@ -184,7 +184,7 @@ comments: true
 
 
 
-This benchmark compares [`tsl::hopscotch_map`](https://github.com/Tessil/hopscotch-map) to `google::sparse_hash_map`, `google::dense_hash_map`, `boost::unordered_map`, `std::unordered_map` (GCC implementation), `QHash` from Qt and [`spp::sparse_hash_map`](https://github.com/greg7mdp/sparsepp) to see how hopscotch hashing performs and how fast each hash table is.
+This benchmark compares [`tsl::hopscotch_map`](https://github.com/Tessil/hopscotch-map) (hopscotch hashing) to `google::sparse_hash_map` (sparse quadratic probing), `google::dense_hash_map` (quadratic probing), `boost::unordered_map` (chaining), `std::unordered_map` (GCC implementation, chaining), `QHash` from Qt (chaining) and [`spp::sparse_hash_map`](https://github.com/greg7mdp/sparsepp) (sparse quadratic probing) to see how hopscotch hashing performs and how fast each hash table is.
 
 To do so we will use the <http://incise.org/hash-table-benchmarks.html> benchmark with a few modifications to fix some of its short-commings:
 
@@ -203,7 +203,7 @@ The fork of the benchmark can be found on [GitHub](https://github.com/Tessil/has
 
 The benchmark was compiled with GCC 6.1 and ran on Linux x64 with an Intel i5-5200u and 8Go of RAM.
 
-The following hash maps were also tested: [`rabbit::unordered_map`](https://github.com/tjizep/rabbit), [`rabbit::sparse_unordered_map`](https://github.com/tjizep/rabbit), [`emilib::HashMap`](https://github.com/emilk/emilib) and [`sherwood_map`](https://github.com/skarupke/sherwood_map). To avoid too much jumble on the charts, the tests are on a [separate page]({{ site.url }}/other/hash_table_benchmark.html) (warning, the page may be slow to load).
+The following hash maps were also tested: [`rabbit::unordered_map`](https://github.com/tjizep/rabbit) (linear probing and chaining mix), [`rabbit::sparse_unordered_map`](https://github.com/tjizep/rabbit) (sparse linear probing and chaining mix), [`emilib::HashMap`](https://github.com/emilk/emilib) (linear probing) and [`sherwood_map`](https://github.com/skarupke/sherwood_map) (linear robin hood). To avoid too much jumble on the charts, the tests are on a [separate page]({{ site.url }}/other/hash_table_benchmark.html) (warning, the page may be slow to load).
 
 <h2>Benchmark</h2>
 
