@@ -195,7 +195,7 @@ To do so we will use the <http://incise.org/hash-table-benchmarks.html> benchmar
     * Add iteration tests.
     * Add read miss tests.
 * We use `std::hash<T>` as hash function for all maps for a fair comparison.
-* Compile with `-O3 -march=native -DNDEBUG` flags.
+* Compiled with `-O3 -march=native -DNDEBUG` flags.
 
 When inserting elements into the maps the `reserve` function is not called beforehand. The insertion time thus also benchmark how fast a map grows through the rehashes.
 
