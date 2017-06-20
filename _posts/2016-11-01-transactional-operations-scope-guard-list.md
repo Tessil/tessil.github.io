@@ -57,7 +57,7 @@ scope_guard<Funct> make_sg(Funct function) {
 }
 ```
 
-The scope guard just takes a function in parameter, stores it and executes it on its destruction, except if `dismiss()` was called.
+The scope guard just takes a function in parameter, stores it and executes it when the scope guard is destroyed, except if `dismiss()` was called beforehand.
 
 To demonstrate its usage, we will create a register of employees where each employee has an id and a name.
 
@@ -77,7 +77,7 @@ When we add an employee to the register, we insert the employee in the first map
 ```c++
 class employee_register {
 public:
-  void add(employee empl) {
+  void add(const employee& empl) {
     auto it = m_id_map.insert({empl.id, empl}).first;
     auto sg = make_sg([&]() noexcept {m_id_map.erase(it);});
 
@@ -94,7 +94,7 @@ private:
 
 All this work fine but let's say that for some reasons we would like to be able to insert a batch of emloyees to the register and it should be an atomic operation. Either they are all added to the register or none of them are.
 
-A simple non-atomic way to do so will look like this.
+A simple non-atomic way to do so would look like this.
 
 ```c++
 void add_batch(std::initializer_list<employee> employees) {
@@ -128,7 +128,6 @@ public:
                     m_execute(other.m_execute)
   {
     other.dismiss();
-    other.m_functions.clear();
   }
  
   ~scope_guard_list() {
