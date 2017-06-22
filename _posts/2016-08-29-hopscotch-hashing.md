@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Hopscotch hashing implementation"
+title:  "Hopscotch hashing"
 date:   2016-08-29 10:00:00 +0100
 comments: true
 ---
