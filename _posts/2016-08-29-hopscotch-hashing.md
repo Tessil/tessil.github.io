@@ -26,7 +26,7 @@ The main idea behind the algorithm is the notion of neighborhood. Each bucket B 
 
 We will describe how we proceed to insert, find and erase elements in the hash map.
 
-The implementation can be found on [GitHub](https://github.com/Tessil/hopscotch-map) and there is a benchmark of the implementation [here]({{ site.url }}/2016/08/29/benchmark-hopscotch-map.html).
+The C++ implementation can be found on [GitHub](https://github.com/Tessil/hopscotch-map) and there is a benchmark of the implementation [here]({{ site.url }}/2016/08/29/benchmark-hopscotch-map.html).
 
 ## Overview
 
