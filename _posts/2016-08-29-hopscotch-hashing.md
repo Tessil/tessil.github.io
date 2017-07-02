@@ -100,7 +100,7 @@ But what happen if there is no candidate for swapping or the neighborhood of the
 
 Now this is all good but there is one thing still missing which the paper did not mention. What if we have more than H values for which the hash function returns the exact same hash? Resizing the bucket array will not change anything as they will still end-up to belong to the same bucket. Even if the modulo *nb_buckets* gets bigger, if *hash(x)* return the same value for different values of *x*, they will all belong to the same bucket. If the hash function is good and the neighborhood size is not too small, it should never really happen but it still may.
 
-To solve the problem, a linked list was added in addition to the bucket array. This linked list will contain overflow elements. If we can not insert the item in the neighborhood of its bucket, even through swapping and rehash, it will go into the overflow list and a tag will be added to the bucket to notify that some elements belonging to the bucket are in the overflow list.
+To solve the problem, a linked list was added in the implementation in addition to the bucket array. This linked list will contain overflow elements. If we can not insert the item in the neighborhood of its bucket, even through swapping and rehash, it will go into the overflow list and a tag will be added to the bucket to notify that some elements belonging to the bucket are in the overflow list.
 
 This will dismiss our cache locality, but it should be really rare for elements to end-up in the overflow list.
 
@@ -118,7 +118,7 @@ The implementation is mainly composed of two structures, the bucket array and th
 
 ### The bucket array
 
-The bucket array is a vector of hopscotch_bucket, std::vector\<hopscotch_bucket\>. Each hopscotch_bucket contains two members, an std::aligned_storage to store the key-value pair and an integer that is used as bitmap.
+The bucket array is a vector of hopscotch_bucket, `std::vector<hopscotch_bucket>`. Each `hopscotch_bucket` contains two members, a `std::aligned_storage` to store the key-value pair and an integer that is used as bitmap.
 
 This bitmap serves multiple purposes:
 
@@ -133,7 +133,7 @@ This bitmap serves multiple purposes:
 
 ### The overflow list
 
-The overflow list is just a std::list\<std::pair\<const Key, Value\>\>. When an element can not be stored in the bucket array, it will be pushed back into the list.
+The overflow list is just a `std::list<std::pair<const Key, Value>>`. When an element can not be stored in the bucket array, it will be pushed back into the list.
 
 
 ## Conclusion
