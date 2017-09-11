@@ -63,7 +63,7 @@ Even though they are not on this page to avoid too much jumble on the charts, ot
 [`google::sparse_hash_map`](https://github.com/sparsehash/sparsehash) (sparse quadratic probing, v2.0),
 [`emilib::HashMap`](https://github.com/emilk/emilib) (linear probing) and 
 [`tsl::array_map`](https://github.com/Tessil/array-hash) (array hash table, specialized for strings, v0.3).
-You can find all these **additional tests** [here]({{ site.url }}/other/hash_table_benchmark.html) (warning, the page is quite heavy, don't open if you are low on memory) with the possibility to easily select which hash maps you want to compare.
+You can find all these **additional tests** [here]({{ site.url }}/other/hash_table_benchmark.html) (warning, the page is a bit heavy) with the possibility to easily select which hash maps you want to compare.
 
 Note that even if the benchmark uses C++ implementations, the benchmark is also useful to compare different collision resolution strategies in hash maps (though there may also be some variations due to the quality of the implementations).
 
