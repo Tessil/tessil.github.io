@@ -54,7 +54,7 @@ For the benchmark we will use the <http://incise.org/hash-table-benchmarks.html>
 * We now use `std::string` as key instead of `const char *` for the strings tests.
 * Multiple tests were added (reads misses, reads after deletes, iteration, ...).
 * We use `std::hash<T>` as hash function for all hash maps for a fair comparison.
-* Compiled with `-O3 -march=native -DNDEBUG` flags (`-march=native` includes the `-mpopcnt` flag on the CPU used by the benchmark, important for some hash maps implementations).
+* Compiled with `-O3 -march=native -DNDEBUG` flags (`-march=native` includes the `-mpopcnt` flag on the CPU used for the benchmark, important for some hash maps implementations).
 
 Even though they are not on this page to avoid too much jumble on the charts, other hash maps were tested along with different max load factors (which is important to take into account when comparing two hash maps): 
 [`ska::flat_hash_map`](https://github.com/skarupke/flat_hash_map) (linear robin hood probing), 
