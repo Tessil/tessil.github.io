@@ -7,7 +7,7 @@ comments: true
 
 <script language="javascript" type="text/javascript" src="{{ site.url }}/js/jquery.min.js"></script>
 <script language="javascript" type="text/javascript" src="{{ site.url }}/js/jquery.flot.min.js"></script>
-<script language="javascript" type="text/javascript" src="{{ site.url }}/other/hash_table_benchmar_post_data.js"></script>
+<script language="javascript" type="text/javascript" src="http://127.0.0.1:4000/other/hash_table_benchmark_post_data.js"></script>
 <script>
 $(function () {
     plot_all_charts();
@@ -36,7 +36,7 @@ $(function () {
         margin-bottom: 2.0em;
     }
 </style>
-<sup>*Updated on Aug 21, 2017.*</sup>
+<sup>*Updated on Sept 23, 2017.*</sup>
 
 This benchmark compares different C++ implementations of hashmaps. The main contestants are 
 [`tsl::hopscotch_map`](https://github.com/Tessil/hopscotch-map) (hopscotch hashing, v1.4), 
@@ -51,10 +51,10 @@ If you just want to know which hash map you should choose, you can skip to the [
 For the benchmark we will use the <http://incise.org/hash-table-benchmarks.html> benchmark but with a few modifications to fix some of its shortcomings.
 
 * The glib, python and ruby hash maps were removed and other C++ hash maps were added.
-* We now use `std::string` as key instead of `const char *` for the string tests.
+* We now use `std::string` as key instead of `const char *` for the strings tests.
 * Multiple tests were added (reads misses, reads after deletes, iteration, ...).
 * We use `std::hash<T>` as hash function for all hash maps for a fair comparison.
-* Compiled with `-O3 -march=native -DNDEBUG` flags.
+* Compiled with `-O3 -march=native -DNDEBUG` flags (`-march=native` includes the `-mpopcnt` flag on the CPU used by the benchmark, important for some hash maps implementations).
 
 Even though they are not on this page to avoid too much jumble on the charts, other hash maps were tested along with different max load factors (which is important to take into account when comparing two hash maps): 
 [`ska::flat_hash_map`](https://github.com/skarupke/flat_hash_map) (linear robin hood probing), 
@@ -65,11 +65,11 @@ Even though they are not on this page to avoid too much jumble on the charts, ot
 [`tsl::array_map`](https://github.com/Tessil/array-hash) (array hash table, specialized for strings, v0.3).
 You can find all these **additional tests** [here]({{ site.url }}/other/hash_table_benchmark.html) (warning, the page is a bit heavy) with the possibility to easily select which hash maps you want to compare.
 
-Note that even if the benchmark uses C++ implementations, the benchmark is also useful to compare different collision resolution strategies in hash maps (though there may also be some variations due to the quality of the implementations).
+Note that even if the benchmark uses C++ implementations, the benchmark is also useful to compare different collision resolution strategies in hash maps (though there may be some variations due to the quality of the implementations).
 
 The code of the benchmark can be found on [GitHub](https://github.com/Tessil/hash-table-shootout) and the raw results of the charts can be found [here]({{ site.url }}/other/hopscotch_map_benchmark_raw_results.csv).
 
-The benchmark was compiled with Clang 4.0.1 and ran on Linux 4.11 x64 with an Intel i5-5200u and 8 Go of RAM.
+The benchmark was compiled with Clang 5.0 and ran on Linux 4.11 x64 with an Intel i5-5200u and 8 Go of RAM.
 
 ## Benchmark
 
@@ -197,9 +197,9 @@ Before the random full inserts benchmark finishes, we measure the memory that th
 
 For the small string tests, we use hash maps with `std::string` as key and `int64_t` as value. 
 
-When we generate a string key, we stringify the entry number for each entry in the range [0, nb_entries). This result in a small string which doesn't need any heap allocation and will be stored on the stack as Clang 4.0.1 (with libstdc++) will use the [small string optimization](https://stackoverflow.com/questions/10315041/meaning-of-acronym-sso-in-the-context-of-stdstring) for any string smaller than 16 characters (which is our case for the range of strings we generate for the tests). The size of each `std::string` is 32 bytes.
+Each string is a random generated string of 15 alphanumeric characters (+1 for the null terminator). A generated key may look like "ju1AOoeWT3LdJxL". The generated string doesn't need any heap allocation and will be stored on the stack as Clang 5.0 (with libstdc++) will use the [small string optimization](https://stackoverflow.com/questions/10315041/meaning-of-acronym-sso-in-the-context-of-stdstring) for any string smaller or equal to 16 characters. This allows hash maps using open addressing to potentially avoid cache-misses on strings comparisons.
 
-This allows hash maps using open addressing to avoid cache-misses on strings comparisons.
+The size of each `std::string` object is 32 bytes.
 
 #### Inserts: execution time (small strings)
 For each entry in the range  [0, nb_entries), we generate a string as key and insert it with the value 1.
@@ -280,9 +280,9 @@ Before the inserts benchmark finishes, we measure the memory that the hash map i
 
 ### Strings
 
-For the string tests, we use hash maps with `std::string` as key and `int64_t` as value. 
+For the strings tests, we use hash maps with `std::string` as key and `int64_t` as value. 
 
-When we generate a string key, we first generate a random positive `int64_t` from an uniform random number generator. We then stringify this value and we prepend the letter 'a' until we reach 50 characters. For example, we will get a string that may look like  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa2947667278772165694" as key. The string is long enough so that Clang can't use the small string optimization and has to store it in a heap allocated storage. Each string has also the same length so that each comparison will go though a trip to a heap allocated area (with its potential cache-miss).
+Each string is a random generated string of 50 alphanumeric characters (+1 for the null terminator). A generated key may look like "nv46iTRp7ur6UMbdgEkCHpoq7Qx7UU9Ta0u1ETdAvUb4LG6Xu6". The generated string is long enough so that Clang can't use the small string optimization and has to store it in a heap allocated area. Each string has also the same length so that each comparison will go though a trip to a heap allocated area (with its potential cache-miss).
 
 The goal of the test is to see how the hash maps behave when comparing keys is slow.
 
@@ -368,7 +368,7 @@ Before the inserts benchmark finishes, we measure the memory that the hash map i
 
 We can see that the hash maps using open addressing provide an advantageous alternative to chaining due to there cache-friendliness. On the integers and small strings read tests, most of them are able to find the key while only loading one or two cache lines which make a significant difference. On insert, they can also avoid a lot of allocations compared to hash maps using chaining which have to allocate the memory for a node at each insert (a custom allocator could improve things).
 
-We can also see in the string tests that storing the hash alongside the values can offer a huge boost on insertions, as we don't have to recalculate the hash on rehashes, and on lookups, as we only compare two strings when the stored hashes are equal avoiding expensive comparisons. Note that `tsl::robin_map` automatically stores the hash and use it on rehashes (but not on lookups without an explicit `StoreHash`) if it can detect that it will not take more memory to do so due to alignment. It explains why the string insert tests is so much faster even without the `StoreHash` parameter.
+We can also see in the strings tests that storing the hash alongside the values can offer a huge boost on insertions, as we don't have to recalculate the hash on rehashes, and on lookups, as we only compare two strings when the stored hashes are equal avoiding expensive comparisons. Note that `tsl::robin_map` automatically stores the hash and use it on rehashes (but not on lookups without an explicit `StoreHash`) if it can detect that it will not take more memory to do so due to alignment. It explains why the string insert tests is so much faster even without the `StoreHash` parameter.
 
 Regarding the load factor, most open addressing schemes get bad results when the load factor is higher than 0.5, even with robin hood probing. Only `tsl::hopscotch_map` is able to cope well with a high load factor like 0.9 without loosing too much in lookup speed offering a really good compromise between speed and memory usage.
 
@@ -377,9 +377,10 @@ Regarding the memory usage, `spp::sparsepp` beats `google::sparse_hash_map` in e
 
 More tests could be done with different hash functions. We are using the Clang implementation of `std::hash` as hash function in all our tests for a fair comparison. Some other hash functions may give better results on some hash map implementations (notably `emilib::HashMap` and `google::sparse_hash_map` which have terrible results on the random shuffle inserts test). We could also test the hash maps with a poor hash function to see how they are able to cope with a bad hash distribution.
 
-The benchmark was oriented toward hash maps. Better structures like tries could be used for the string mapping, but `std::string` is a familiar example to test bigger keys than `int64_t` and may incur a cache-miss on comparison if big enough.
+The benchmark was oriented toward hash maps. Better structures like tries could be used to map strings to values, but `std::string` is a familiar example to test bigger keys than `int64_t` and may incur a cache-miss on comparison if big enough.
 
-In conclusion, even though `std::unordered_map` is a good implementation, it may be worth to check the alternatives if you need more speed or your hash map is using too much memory.
+In conclusion, even though `std::unordered_map` is a good implementation, it may be worth to check the alternatives if you need more speed or if your hash map is using too much memory.
+
 
 ## Which hash map should I choose?
 
@@ -393,19 +394,19 @@ Both have quite similar lookup speed at low load factor but `tsl::hopscotch_map`
 
 The main drawback of hopscotch hashing is that it can suffer quite a bit of clustering in the neighborhood of a bucket which may cause extensive rehashes. When storing the hash with the `StoreHash` template parameter, it also needs to reduce the size of the neighborhood which may deepens the previous problem. But this should not be a problem with a good hash function.
 
-On the other hand, `tsl::robin_map` can store the hash at no extra cost in most cases and will automatically do so when these cases are detected to speed up the rehash process. As the map only need a few bytes in the bucket for bookkeeping, it uses the rest of the space left due to alignment to store part of the hash. The `tsl::robin_map` also offers a faster insertion speed than `tsl::hopscotch_map` and is able to cope better with a poor hash function.
+On the other hand, `tsl::robin_map` can store the hash at no extra cost in most cases and will automatically do so when these cases are detected to speed up the rehash process. As the map only need a few bytes in the bucket for bookkeeping, it uses the rest of the space left due to memory alignment to store part of the hash. The `tsl::robin_map` also offers a faster insertion speed than `tsl::hopscotch_map` and is able to cope better with a poor hash function.
 
 Quadratic probing with `google::dense_hash_map` may also be a good candidate but can't cope well with a high load factor thus needing more memory. It also do quite poorly on reads misses. Linear probing with `emilib::HashMap` suffers from the same problems.
 
 So in the end I would recommend to try out `tsl::hopscotch_map` or `tsl::robin_map` and see which one work the best for your use case.
 
-**For memory efficiency.** If you are storing small objects (< 32 bytes) with a trivial key comparator, `spp::sparse_hash_map` should be your go to hash map. Even though it is quite slow on insertions, it offers a good balance between lookup speed an memory usage, even at low load factor.
+**For memory efficiency.** If you are storing small objects (< 32 bytes) with a trivial key comparator, `spp::sparse_hash_map` should be your go to hash map. Even though it is quite slow on insertions, it offers a good balance between lookup speed and memory usage, even at low load factor.
 
 When dealing with larger objects with a non-trivial key comparator, you may also want to try `tsl::ordered_map` even if you don't need the order of insertion to be kept. It can grow the map quite fast as it never need to move the keys-values outside of deletions and provides good performances on lookups while keeping a low memory usage. For smaller objects with a trivial key comparator, it is only as good as `std::unordered_map` for lookups.
 
-**For strings as key.** If you are using strings as key, the above recommendations still hold true but you may also want to try `tsl::array_map`. It offers one of the best lookup speed while having the lowest memory usage. The main drawback is that the rehash process is slow and will need some spare memory to copy the strings from the old map to the new map (it can't use `std::move` as the other hash maps using `std::string` as key). But if you know the number of items beforehand, you can call the `reserve` function to avoid the problem. 
+**For strings as key.** If you are using strings as key, the above recommendations still hold true but you may also want to try `tsl::array_map`. It offers one of the best lookup speed on large strings while having the lowest memory usage. The main drawback is that the rehash process is slow and will need some spare memory to copy the strings from the old map to the new map (it can't use `std::move` as the other hash maps using `std::string` as key). But if you know the number of items beforehand, you can call the `reserve` function to avoid the problem.
 
-If you need an even more compact way to store the strings, you may also consider a trie, notably [`tsl::htrie_map`](https://github.com/Tessil/hat-trie), even if you don't need to do any prefix search. The HAT-trie provides a really memory efficient way to store the strings without loosing too much on lookup speed.
+If you need an even more compact way to store the strings, you may also consider a trie, notably [`tsl::htrie_map`](https://github.com/Tessil/hat-trie), even if you don't need to do any prefix search. The HAT-trie provides a really memory efficient way to store the strings without losing too much on lookup speed.
 
 **For large objects.** When dealing with large objects which take time to copy or move around, using open addressing is not a good idea. On insertion the values may have to be moved around either because it is part of the insertion process (hopscotch hashing, robin hood hashing, cuckoo hashing, ...) or due to a rehash. Best to stick to `std::unordered_map` which can just move pointers to nodes around or eventually `tsl::ordered_map` which only need to move one element on deletion.
 
