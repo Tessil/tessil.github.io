@@ -7,7 +7,7 @@ comments: true
 
 <script language="javascript" type="text/javascript" src="{{ site.url }}/js/jquery.min.js"></script>
 <script language="javascript" type="text/javascript" src="{{ site.url }}/js/jquery.flot.min.js"></script>
-<script language="javascript" type="text/javascript" src="http://127.0.0.1:4000/other/hash_table_benchmark_post_data.js"></script>
+<script language="javascript" type="text/javascript" src="{{ site.url }}/other/hash_table_benchmark_post_data.js"></script>
 <script>
 $(function () {
     plot_all_charts();
