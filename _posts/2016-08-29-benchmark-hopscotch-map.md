@@ -36,15 +36,15 @@ $(function () {
         margin-bottom: 2.0em;
     }
 </style>
-<sup>*Updated on Sept 23, 2017.*</sup>
+<sup>*Updated on Oct 05, 2017.*</sup>
 
 This benchmark compares different C++ implementations of hashmaps. The main contestants are 
 [`tsl::hopscotch_map`](https://github.com/Tessil/hopscotch-map) (hopscotch hashing, v1.4), 
 [`tsl::robin_map`](https://github.com/Tessil/robin-map) (linear robin hood probing, v0.1), 
+[`tsl::sparse_map`](https://github.com/Tessil/sparse-map) (sparse quadratic probing, v0.1),
 [`std::unordered_map`](http://en.cppreference.com/w/cpp/container/unordered_map) (chaining, libstdc++ implementation, v3.4),
-[`google::dense_hash_map`](https://github.com/sparsehash/sparsehash) (quadratic probing, v2.0),
-[`QHash`](https://doc.qt.io/qt-5/qhash.html) (chaining, v4.8) and
-[`spp::sparse_hash_map`](https://github.com/greg7mdp/sparsepp) (sparse quadratic probing). We will see how they perform in a large range of operations, both in terms of speed and memory usage.
+[`google::dense_hash_map`](https://github.com/sparsehash/sparsehash) (quadratic probing, v2.0) and
+[`QHash`](https://doc.qt.io/qt-5/qhash.html) (chaining, v4.8). We will see how they perform in a large range of operations, both in terms of speed and memory usage.
 
 If you just want to know which hash map you should choose, you can skip to the [last section](#which-hash-map-should-i-choose) which offers some recommendations depending on your use case.
 
@@ -58,6 +58,7 @@ For the benchmark we will use the <http://incise.org/hash-table-benchmarks.html>
 
 Even though they are not on this page to avoid too much jumble on the charts, other hash maps were tested along with different max load factors (which is important to take into account when comparing two hash maps): 
 [`ska::flat_hash_map`](https://github.com/skarupke/flat_hash_map) (linear robin hood probing), 
+[`spp::sparse_hash_map`](https://github.com/greg7mdp/sparsepp) (sparse quadratic probing),
 [`tsl::ordered_map`](https://github.com/Tessil/ordered-map) (linear robin hood probing with keys-values outside the bucket array, v0.4), 
 [`boost::unordered_map`](http://www.boost.org/doc/libs/1_62_0/doc/html/unordered.html) (chaining, v1.62),
 [`google::sparse_hash_map`](https://github.com/sparsehash/sparsehash) (sparse quadratic probing, v2.0),
@@ -69,7 +70,7 @@ Note that even if the benchmark uses C++ implementations, the benchmark is also 
 
 The code of the benchmark can be found on [GitHub](https://github.com/Tessil/hash-table-shootout) and the raw results of the charts can be found [here]({{ site.url }}/other/hopscotch_map_benchmark_raw_results.csv).
 
-The benchmark was compiled with Clang 5.0 and ran on Linux 4.11 x64 with an Intel i5-5200u and 8 Go of RAM.
+The benchmark was compiled with Clang 5.0 and ran on Linux 4.11 x64 with an Intel i5-5200u and 8 Go of RAM. Best of five runs was taken.
 
 ## Benchmark
 
@@ -372,7 +373,7 @@ We can also see in the strings tests that storing the hash alongside the values 
 
 Regarding the load factor, most open addressing schemes get bad results when the load factor is higher than 0.5, even with robin hood probing. Only `tsl::hopscotch_map` is able to cope well with a high load factor like 0.9 without loosing too much in lookup speed offering a really good compromise between speed and memory usage.
 
-Regarding the memory usage, `spp::sparsepp` beats `google::sparse_hash_map` in every speed test for the price of a little memory increase. And even if it is a bit slow on insert, it offers an impressive balance between memory usage and lookup speed.
+Regarding the memory usage, `tsl::sparse_map` beats `google::sparse_hash_map` in every speed test for the price of a little memory increase. And even if it is a bit slow on insert, it offers an impressive balance between memory usage and lookup speed.
 
 
 More tests could be done with different hash functions. We are using the Clang implementation of `std::hash` as hash function in all our tests for a fair comparison. Some other hash functions may give better results on some hash map implementations (notably `emilib::HashMap` and `google::sparse_hash_map` which have terrible results on the random shuffle inserts test). We could also test the hash maps with a poor hash function to see how they are able to cope with a bad hash distribution.
@@ -400,7 +401,7 @@ Quadratic probing with `google::dense_hash_map` may also be a good candidate but
 
 So in the end I would recommend to try out `tsl::hopscotch_map` or `tsl::robin_map` and see which one work the best for your use case.
 
-**For memory efficiency.** If you are storing small objects (< 32 bytes) with a trivial key comparator, `spp::sparse_hash_map` should be your go to hash map. Even though it is quite slow on insertions, it offers a good balance between lookup speed and memory usage, even at low load factor.
+**For memory efficiency.** If you are storing small objects (< 32 bytes) with a trivial key comparator, `tsl::sparse_map` should be your go to hash map. Even though it is quite slow on insertions, it offers a good balance between lookup speed and memory usage, even at low load factor. It is also faster than both `google::sparse_hash_map` and `spp::sparse_hash_map` while providing more functionalities.
 
 When dealing with larger objects with a non-trivial key comparator, you may also want to try `tsl::ordered_map` even if you don't need the order of insertion to be kept. It can grow the map quite fast as it never need to move the keys-values outside of deletions and provides good performances on lookups while keeping a low memory usage. For smaller objects with a trivial key comparator, it is only as good as `std::unordered_map` for lookups.
 
