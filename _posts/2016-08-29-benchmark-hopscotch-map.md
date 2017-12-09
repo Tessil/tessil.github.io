@@ -283,13 +283,13 @@ Before the inserts benchmark finishes, we measure the memory that the hash map i
 
 For the strings tests, we use hash maps with `std::string` as key and `int64_t` as value. 
 
-Each string is a random generated string of 50 alphanumeric characters (+1 for the null terminator). A generated key may look like "nv46iTRp7ur6UMbdgEkCHpoq7Qx7UU9Ta0u1ETdAvUb4LG6Xu6". The generated string is long enough so that Clang can't use the small string optimization and has to store it in a heap allocated area. Each string has also the same length so that each comparison will go though a trip to a heap allocated area (with its potential cache-miss).
+Each string is a random generated string of 50 alphanumeric characters (+1 for the null terminator). A generated key may look like "nv46iTRp7ur6UMbdgEkCHpoq7Qx7UU9Ta0u1ETdAvUb4LG6Xu6". The generated string is long enough so that Clang can't use the small string optimization and has to store it in a heap allocated area. Each string has also the same length so that each comparison will go through a trip to a heap allocated area (with its potential cache-miss).
 
 The goal of the test is to see how the hash maps behave when comparing keys is slow.
 
 
 #### Inserts: execution time (strings)
-We generate nb_entries strings as key and insert them with the value 1.
+For each entry in the range [0, nb_entries), we generate a string as key and insert it with the value 1.
 
 <div class="chart" id="insert_string_runtime"></div>
 <div class="xaxis-title">number of entries in hash table</div>
@@ -369,11 +369,11 @@ Before the inserts benchmark finishes, we measure the memory that the hash map i
 
 We can see that the hash maps using open addressing provide an advantageous alternative to chaining due to there cache-friendliness. On the integers and small strings read tests, most of them are able to find the key while only loading one or two cache lines which make a significant difference. On insert, they can also avoid a lot of allocations compared to hash maps using chaining which have to allocate the memory for a node at each insert (a custom allocator could improve things).
 
-We can also see in the strings tests that storing the hash alongside the values can offer a huge boost on insertions, as we don't have to recalculate the hash on rehashes, and on lookups, as we only compare two strings when the stored hashes are equal avoiding expensive comparisons. Note that `tsl::robin_map` automatically stores the hash and use it on rehashes (but not on lookups without an explicit `StoreHash`) if it can detect that it will not take more memory to do so due to alignment. It explains why the string insert tests is so much faster even without the `StoreHash` parameter.
+We can also see in the strings tests that storing the hash alongside the values can offer a huge boost on insertions, as we don't have to recalculate the hash on rehashes, and on lookups, as we only compare two strings when the stored hashes are equal avoiding expensive comparisons. Note that `tsl::robin_map` automatically stores the hash and uses it on rehashes (but not on lookups without an explicit `StoreHash`) if it can detect that it will not take more memory to do so due to alignment. It explains why the strings inserts test is so much faster even without the `StoreHash` parameter.
 
 Regarding the load factor, most open addressing schemes get bad results when the load factor is higher than 0.5, even with robin hood probing. Only `tsl::hopscotch_map` is able to cope well with a high load factor like 0.9 without loosing too much in lookup speed offering a really good compromise between speed and memory usage.
 
-Regarding the memory usage, `tsl::sparse_map` beats `google::sparse_hash_map` in every speed test for the price of a little memory increase. And even if it is a bit slow on insert, it offers an impressive balance between memory usage and lookup speed.
+Regarding the memory usage, `tsl::sparse_map` beats `google::sparse_hash_map` in every speed test for the price of a little memory increase. And even if it is a bit slow on inserts, it offers an impressive balance between memory usage and lookup speed.
 
 
 More tests could be done with different hash functions. We are using the Clang implementation of `std::hash` as hash function in all our tests for a fair comparison. Some other hash functions may give better results on some hash map implementations (notably `emilib::HashMap` and `google::sparse_hash_map` which have terrible results on the random shuffle inserts test). We could also test the hash maps with a poor hash function to see how they are able to cope with a bad hash distribution.
@@ -399,17 +399,17 @@ On the other hand, `tsl::robin_map` can store the hash at no extra cost in most 
 
 Quadratic probing with `google::dense_hash_map` may also be a good candidate but can't cope well with a high load factor thus needing more memory. It also do quite poorly on reads misses. Linear probing with `emilib::HashMap` suffers from the same problems.
 
-So in the end I would recommend to try out `tsl::hopscotch_map` or `tsl::robin_map` and see which one work the best for your use case.
+So in the end I would recommend to try out `tsl::hopscotch_map` or `tsl::robin_map` (with a preference for `tsl::hopscotch_map` as it uses less memory) and see which one work the best for your use case.
 
 **For memory efficiency.** If you are storing small objects (< 32 bytes) with a trivial key comparator, `tsl::sparse_map` should be your go to hash map. Even though it is quite slow on insertions, it offers a good balance between lookup speed and memory usage, even at low load factor. It is also faster than both `google::sparse_hash_map` and `spp::sparse_hash_map` while providing more functionalities.
 
-When dealing with larger objects with a non-trivial key comparator, you may also want to try `tsl::ordered_map` even if you don't need the order of insertion to be kept. It can grow the map quite fast as it never need to move the keys-values outside of deletions and provides good performances on lookups while keeping a low memory usage. For smaller objects with a trivial key comparator, it is only as good as `std::unordered_map` for lookups.
+When dealing with larger objects with a non-trivial key comparator, `tsl::sparse_map` will do fine too, but you may also want to try `tsl::ordered_map` even if you don't need the order of insertion to be kept. It can grow the map quite fast as it never needs to move the keys-values outside of deletions and provides good performances on lookups while keeping a low memory usage. For smaller objects with a trivial key comparator, it is only as good as `std::unordered_map` for lookups.
 
 **For strings as key.** If you are using strings as key, the above recommendations still hold true but you may also want to try `tsl::array_map`. It offers one of the best lookup speed on large strings while having the lowest memory usage. The main drawback is that the rehash process is slow and will need some spare memory to copy the strings from the old map to the new map (it can't use `std::move` as the other hash maps using `std::string` as key). But if you know the number of items beforehand, you can call the `reserve` function to avoid the problem.
 
 If you need an even more compact way to store the strings, you may also consider a trie, notably [`tsl::htrie_map`](https://github.com/Tessil/hat-trie), even if you don't need to do any prefix search. The HAT-trie provides a really memory efficient way to store the strings without losing too much on lookup speed.
 
-**For large objects.** When dealing with large objects which take time to copy or move around, using open addressing is not a good idea. On insertion the values may have to be moved around either because it is part of the insertion process (hopscotch hashing, robin hood hashing, cuckoo hashing, ...) or due to a rehash. Best to stick to `std::unordered_map` which can just move pointers to nodes around or eventually `tsl::ordered_map` which only need to move one element on deletion.
+**For large objects.** When dealing with large objects which take time to copy or move around, using open addressing is not a good idea. On insertion the values may have to be moved around either because it is part of the insertion process (hopscotch hashing, robin hood hashing, cuckoo hashing, ...) or due to a rehash. Best to stick to `std::unordered_map` which can just moves pointers to nodes around or eventually `tsl::ordered_map` which only needs to move one element on deletion.
 
 
 In the end these are some basic advices based on a benchmark using some artificial use cases with a specific compiler. The best is still to pick-up some candidates and test them with your code in your environment.
