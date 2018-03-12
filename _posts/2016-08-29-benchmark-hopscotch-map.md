@@ -198,7 +198,7 @@ Before the random full inserts benchmark finishes, we measure the memory that th
 
 For the small string tests, we use hash maps with `std::string` as key and `int64_t` as value. 
 
-Each string is a random generated string of 15 alphanumeric characters (+1 for the null terminator). A generated key may look like "ju1AOoeWT3LdJxL". The generated string doesn't need any heap allocation and will be stored on the stack as Clang 5.0 (with libstdc++) will use the [small string optimization](https://stackoverflow.com/questions/10315041/meaning-of-acronym-sso-in-the-context-of-stdstring) for any string smaller or equal to 16 characters. This allows hash maps using open addressing to potentially avoid cache-misses on strings comparisons.
+Each string is a random generated string of 15 alphanumeric characters (+1 for the null terminator). A generated key may look like "ju1AOoeWT3LdJxL". The generated string doesn't need any extra heap allocation as Clang 5.0 (with libstdc++) will use the [small string optimization](https://stackoverflow.com/questions/10315041/meaning-of-acronym-sso-in-the-context-of-stdstring) for any string smaller or equal to 16 characters. This allows hash maps using open addressing to potentially avoid cache-misses on strings comparisons.
 
 The size of each `std::string` object is 32 bytes.
 
