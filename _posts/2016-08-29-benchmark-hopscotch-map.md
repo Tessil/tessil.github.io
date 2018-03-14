@@ -200,7 +200,7 @@ For the small string tests, we use hash maps with `std::string` as key and `int6
 
 Each string is a random generated string of 15 alphanumeric characters (+1 for the null terminator). A generated key may look like "ju1AOoeWT3LdJxL". The generated string doesn't need any extra heap allocation as Clang 5.0 (with libstdc++) will use the [small string optimization](https://stackoverflow.com/questions/10315041/meaning-of-acronym-sso-in-the-context-of-stdstring) for any string smaller or equal to 16 characters. This allows hash maps using open addressing to potentially avoid cache-misses on strings comparisons.
 
-The size of each `std::string` object is 32 bytes.
+The size of each `std::string` object is 32 bytes on the used compiler.
 
 #### Inserts: execution time (small strings)
 For each entry in the range  [0, nb_entries), we generate a string as key and insert it with the value 1.
@@ -369,21 +369,21 @@ Before the inserts benchmark finishes, we measure the memory that the hash map i
 
 We can see that the hash maps using open addressing provide an advantageous alternative to chaining due to there cache-friendliness. On the integers and small strings read tests, most of them are able to find the key while only loading one or two cache lines which make a significant difference. On insert, they can also avoid a lot of allocations compared to hash maps using chaining which have to allocate the memory for a node at each insert (a custom allocator could improve things).
 
-We can also see in the strings tests that storing the hash alongside the values can offer a huge boost on insertions, as we don't have to recalculate the hash on rehashes, and on lookups, as we only compare two strings when the stored hashes are equal avoiding expensive comparisons. Note that `tsl::robin_map` automatically stores the hash and uses it on rehashes (but not on lookups without an explicit `StoreHash`) if it can detect that it will not take more memory to do so due to alignment. It explains why the strings inserts test is so much faster even without the `StoreHash` parameter.
+In the strings tests, we can see that storing the hash alongside the values can offer a huge boost on insertions, as we don't have to recalculate the hash on rehashes, and on lookups, as we only compare two strings when the stored hashes are equal avoiding expensive comparisons. Note that `tsl::robin_map` automatically stores the hash and uses it on rehashes (but not on lookups without an explicit `StoreHash`) if it can detect that it will not take more memory to do so due to alignment. It explains why the strings inserts test is so much faster even without the `StoreHash` parameter.
 
-Regarding the load factor, most open addressing schemes get bad results when the load factor is higher than 0.5, even with robin hood probing. Only `tsl::hopscotch_map` is able to cope well with a high load factor like 0.9 without loosing too much in lookup speed offering a really good compromise between speed and memory usage.
+Regarding the load factor, most open addressing schemes get bad results when the load factor is higher than 0.5, even with robin hood probing (see the [additional tests]({{ site.url }}/other/hash_table_benchmark.html)). Only `tsl::hopscotch_map` is able to cope well with a high load factor like 0.9 without loosing too much in lookup speed offering a really good compromise between speed and memory usage.
 
 Regarding the memory usage, `tsl::sparse_map` beats `google::sparse_hash_map` in every speed test for the price of a little memory increase. And even if it is a bit slow on inserts, it offers an impressive balance between memory usage and lookup speed.
 
 
-More tests could be done with different hash functions. We are using the Clang implementation of `std::hash` as hash function in all our tests for a fair comparison. Some other hash functions may give better results on some hash map implementations (notably `emilib::HashMap` and `google::sparse_hash_map` which have terrible results on the random shuffle inserts test). We could also test the hash maps with a poor hash function to see how they are able to cope with a bad hash distribution.
+In the benchmark, we are using the Clang implementation of `std::hash` as hash function in all our tests. This implementation of the hash just uses the identity function, some other hash functions may give better results on some hash maps implementations (notably `emilib::HashMap` and `google::sparse_hash_map` which have terrible results on the random shuffle integers inserts test). A more robust hash function could be tested. A poor hash function could be tested as well to check how each hash map is able to cope with a bad hash distribution.
 
-The benchmark was oriented toward hash maps. Better structures like tries could be used to map strings to values, but `std::string` is a familiar example to test bigger keys than `int64_t` and may incur a cache-miss on comparison if big enough.
+The benchmark was exclusively oriented toward hash maps. Better structures like tries could be used to map strings to values, but `std::string` is a familiar example to test bigger keys than `int64_t` and may incur a cache-miss on comparison if big enough due to its memory indirection.
 
-In conclusion, even though `std::unordered_map` is a good implementation, it may be worth to check the alternatives if you need more speed or if your hash map is using too much memory.
+In conclusion, even though `std::unordered_map` is a good implementation, it may be worth to check the alternatives if you need better performances or if your hash map is using too much memory.
 
 
-## Which hash map should I choose?
+### Which hash map should I choose?
 
 Each hash map has its advantages and inconveniences so it may be difficult to pick-up the right one. Here are some general recommendations depending on your use case.
 
