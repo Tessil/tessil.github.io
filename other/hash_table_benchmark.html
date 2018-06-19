@@ -384,7 +384,6 @@ We then delete each key one by one in a different and random order than the one 
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="delete_random_full_runtime_choices"></ul>
 
-<p>Note that on deletion, google::sparse_hash_map and spp::sparse_hash_map reduce part of their bucket array in addition to the deletion of the value. This slow down the process and should be taken into account when comparing the hash maps.</p>
 
 <h3>Random shuffle reads: execution time (integers)</h3>
 
@@ -499,8 +498,6 @@ We then delete each key one by one in a different and random order than the one 
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="delete_small_string_runtime_choices"></ul>
 
-<p>Note that on deletion, google::sparse_hash_map and spp::sparse_hash_map reduce part of their bucket array in addition to the deletion of the value. This slow down the process and should be taken into account when comparing the hash maps.</p>
-
 
 <h3>Reads: execution time (small strings)</h3>
 
@@ -589,8 +586,6 @@ We then delete each key one by one in a different and random order than the one 
 <div class="chart" id="delete_string_runtime"></div>
 <div class="xaxis-title">number of entries in hash table</div>
 <ul class="choices" id="delete_string_runtime_choices"></ul>
-
-<p>Note that on deletion, google::sparse_hash_map and spp::sparse_hash_map reduce part of their bucket array in addition to the deletion of the value. This slow down the process and should be taken into account when comparing the hash maps.</p>
 
 
 <h3>Reads: execution time (strings)</h3>
