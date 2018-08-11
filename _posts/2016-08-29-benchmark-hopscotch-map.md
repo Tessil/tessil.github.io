@@ -399,7 +399,7 @@ On the other hand, `tsl::robin_map` can store the hash at no extra cost in most 
 
 Quadratic probing with `google::dense_hash_map` may also be a good candidate but can't cope well with a high load factor thus needing more memory. It also do quite poorly on reads misses. Linear probing with `emilib::HashMap` suffers from the same problems.
 
-So in the end I would recommend to try out `tsl::hopscotch_map` or `tsl::robin_map` (with a preference for `tsl::hopscotch_map` as it uses less memory) and see which one work the best for your use case.
+So in the end I would recommend to try out both `tsl::hopscotch_map` and `tsl::robin_map` and see which one works the best for your use case. As a basic guideline, prefer `tsl::hopscotch_map` if you don't want to use too much memory and `tsl::robin_map` if speed is what mainly matters.
 
 **For memory efficiency.** If you are storing small objects (< 32 bytes) with a trivial key comparator, `tsl::sparse_map` should be your go to hash map. Even though it is quite slow on insertions, it offers a good balance between lookup speed and memory usage, even at low load factor. It is also faster than both `google::sparse_hash_map` and `spp::sparse_hash_map` while providing more functionalities.
 
