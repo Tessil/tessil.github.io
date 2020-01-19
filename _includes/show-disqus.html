@@ -8,6 +8,12 @@
 <script>
 var disqus_loaded = false;
 var disqus_shortname = 'tessil'; //Add your shortname here
+
+var disqus_config = function () {
+    this.page.url = "{{ site.url }}{{ page.url }}";  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = "{{ page.id }}"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+
 function disqus() {
     if (!disqus_loaded)  {
         disqus_loaded = true;
